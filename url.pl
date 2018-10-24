@@ -53,7 +53,31 @@ sub check_url {
     print "\n";
   }
   else{
-  print "$_[0]\n";
+  open(my $fh, '>>', 'report.txt');
+  print $fh "$_[0]\n";
+  close $fh;
   print "  $_[0]\n";
+  }
+}
+
+use strict;
+use warnings;
+
+sub each_array {
+
+  my @copy = @_;
+  my $i;
+  my $max;
+
+  for (map scalar @$_, @copy) {
+    $max = $_ unless defined $max and $max > $_;
+  }
+
+  sub {
+    return $i if @_ and shift eq 'index';
+    my $new_i = defined $i ? $i + 1 : 0;
+    return if $new_i >= $max;
+    $i = $new_i;
+    return map $_->[$i], @copy;
   }
 }
